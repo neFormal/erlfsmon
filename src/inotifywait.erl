@@ -6,7 +6,9 @@ find_executable() ->
 
 start_port(Path, Cwd) ->
     Path1 = filename:absname(Path),
-    Args = [find_executable(), "-m", "-e", "close_write", "-e", "moved_to", "-e", "create", "-r", Path1],
+
+    AdditionalArgs = erlfsmon:args(inotifywait),
+    Args = [find_executable(), "-m", "-e", "close_write", "-e", "moved_to", "-e", "create", "-r"] ++ AdditionalArgs ++ [Path1],
     erlang:open_port({spawn_executable, erlsh:fdlink_executable()},
         [stream, exit_status, {line, 16384}, {args, Args}, {cd, Cwd}]).
 
